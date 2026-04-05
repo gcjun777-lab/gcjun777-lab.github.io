@@ -1,0 +1,227 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YOUR NAME | Portfolio & Blog</title>
+    <meta name="description" content="个人网站（作品集 + 博客）" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <aside class="side-progress" id="sideProgress">
+      <p class="side-title" id="sideProgressTitle">首页进度</p>
+      <div class="side-list" id="sideProgressList"></div>
+    </aside>
+
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <h1 class="brand" id="brandName">YOUR NAME</h1>
+        <nav class="nav">
+          <button class="tab is-active" data-tab="dashboard">首页</button>
+          <button class="tab" data-tab="portfolio">作品</button>
+          <button class="tab" data-tab="articles">博客</button>
+          <button class="tab" data-tab="about">关于</button>
+          <button class="tab" data-tab="contact">联系</button>
+        </nav>
+        <div class="actions">
+          <button id="adminToggle" class="mini-btn" type="button">管理解锁</button>
+          <button id="langToggle" class="mini-btn" type="button">中 / EN</button>
+          <button id="themeToggle" class="mini-btn" type="button">◐</button>
+          <button id="togglePageEdit" class="mini-btn" type="button">页面编辑</button>
+          <button id="openPostModal" class="mini-btn" type="button">写文章</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap page">
+      <section class="view is-show" id="view-dashboard">
+        <div class="home-intro reveal" id="dashboardHero">
+          <div>
+            <img id="homeAvatar" class="avatar" src="https://picsum.photos/200" alt="avatar" />
+            <label id="avatarUploadLabel" class="mini-btn hidden" for="avatarFileInput">上传头像</label>
+            <input id="avatarFileInput" type="file" accept="image/*" class="hidden" />
+          </div>
+          <div>
+            <p class="kicker" id="homeKicker">PERSONAL WEBSITE</p>
+            <h2 class="hero-title" id="heroTitle">作品集 · 博客</h2>
+            <p class="hero-sub" id="heroSubtitle">极简、干净、可扩展。用于展示你的项目、文章和联系方式。</p>
+            <p class="hero-meta" id="heroMeta">前端开发者 / 创作者 / 上海</p>
+          </div>
+        </div>
+
+        <div class="home-sections">
+          <section class="home-block reveal" id="dash-feed">
+            <h3 class="section-mini">动态</h3>
+            <div id="homeTimeline" class="timeline-list"></div>
+          </section>
+          <section class="home-block reveal" id="dash-works">
+            <h3 class="section-mini">最新作品</h3>
+            <div id="latestWorks" class="cards two-col"></div>
+          </section>
+          <section class="home-block reveal" id="dash-posts">
+            <h3 class="section-mini">最新文章</h3>
+            <div id="latestPosts" class="cards two-col"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-portfolio">
+        <h2 class="view-title reveal">作品</h2>
+        <p class="view-sub reveal" id="portfolioSubtitle">精选项目展示区。</p>
+
+        <div class="blog-toolbar reveal" id="portfolio-toolbar">
+          <input id="workSearch" type="search" placeholder="搜索作品标题或内容..." />
+          <select id="workTagFilter"><option value="all">全部标签</option></select>
+          <button id="newWorkBtn" class="mini-btn" type="button">+ 新作品</button>
+        </div>
+
+        <div id="workList" class="cards"></div>
+
+        <article id="workDetail" class="blog-detail hidden">
+          <button id="backToWorks" class="mini-btn" type="button">← 返回作品列表</button>
+          <button id="editCurrentWork" class="mini-btn" type="button">编辑作品</button>
+          <h3 id="workDetailTitle"></h3>
+          <p id="workDetailMeta" class="detail-meta"></p>
+          <div id="workDetailTags" class="detail-tags"></div>
+          <img id="workDetailCover" class="detail-cover hidden" alt="work cover" />
+          <div id="workDetailContent" class="detail-content markdown-body"></div>
+
+          <section id="workInlineEditor" class="inline-edit hidden">
+            <h4 id="workInlineEditorTitle">编辑作品（当前页）</h4>
+            <label>标题<input id="workInlineTitle" type="text" /></label>
+            <label>摘要<input id="workInlineExcerpt" type="text" /></label>
+            <label>标签（逗号分隔）<input id="workInlineTags" type="text" /></label>
+            <label>封面图<input id="workInlineCoverInput" type="file" accept="image/*" /></label>
+            <div id="workInlineCoverPreviewWrap" class="cover-preview hidden">
+              <img id="workInlineCoverPreview" alt="work cover preview" />
+            </div>
+            <label>Markdown 详情<textarea id="workInlineMarkdown" rows="10"></textarea></label>
+            <div class="inline-actions">
+              <button id="workInsertImageBtn" class="mini-btn" type="button">插入图片到 Markdown</button>
+              <input id="workInlineImageInput" type="file" accept="image/*" class="hidden" />
+            </div>
+            <label>Markdown 预览</label>
+            <div id="workInlineMarkdownPreview" class="markdown-body preview"></div>
+            <div class="inline-actions">
+              <button id="workInlineCancelBtn" class="mini-btn" type="button">取消</button>
+              <button id="workInlineDeleteBtn" class="mini-btn" type="button">删除</button>
+              <button id="workInlineSaveBtn" class="primary-btn" type="button">保存作品</button>
+            </div>
+          </section>
+        </article>
+      </section>
+
+      <section class="view" id="view-articles">
+        <h2 class="view-title" id="blogTitle">博客</h2>
+        <p class="view-sub" id="blogSubtitle">支持搜索、标签筛选与 Markdown 阅读。</p>
+
+        <div class="blog-toolbar" id="articles-toolbar">
+          <input id="blogSearch" type="search" placeholder="搜索标题或内容..." />
+          <select id="blogTagFilter"><option value="all">全部标签</option></select>
+          <button id="newPostQuick" class="mini-btn" type="button">+ 新文章</button>
+        </div>
+
+        <div id="blogList" class="cards"></div>
+
+        <article id="blogDetail" class="blog-detail hidden">
+          <button id="backToList" class="mini-btn" type="button">← 返回列表</button>
+          <button id="editCurrentPost" class="mini-btn" type="button">编辑文章</button>
+          <h3 id="detailTitle"></h3>
+          <p id="detailMeta" class="detail-meta"></p>
+          <div id="detailTags" class="detail-tags"></div>
+          <img id="detailCover" class="detail-cover hidden" alt="cover" />
+          <div id="detailContent" class="detail-content markdown-body"></div>
+
+          <section id="inlineEditor" class="inline-edit hidden">
+            <h4 id="inlineEditorTitle">编辑文章（当前页）</h4>
+            <label>标题<input id="inlinePostTitle" type="text" /></label>
+            <label>摘要<input id="inlinePostExcerpt" type="text" /></label>
+            <label>标签（逗号分隔）<input id="inlinePostTags" type="text" /></label>
+            <label>封面图<input id="inlinePostCoverInput" type="file" accept="image/*" /></label>
+            <div id="inlineCoverPreviewWrap" class="cover-preview hidden">
+              <img id="inlineCoverPreview" alt="cover preview" />
+            </div>
+            <label>Markdown 正文<textarea id="inlinePostMarkdown" rows="10"></textarea></label>
+            <div class="inline-actions">
+              <button id="inlineInsertImageBtn" class="mini-btn" type="button">插入图片到 Markdown</button>
+              <input id="inlineEditorImageInput" type="file" accept="image/*" class="hidden" />
+            </div>
+            <label>Markdown 预览</label>
+            <div id="inlineMarkdownPreview" class="markdown-body preview"></div>
+            <div class="inline-actions">
+              <button id="inlineCancelBtn" class="mini-btn" type="button">取消</button>
+              <button id="inlineDeleteBtn" class="mini-btn" type="button">删除</button>
+              <button id="inlineSaveBtn" class="primary-btn" type="button">保存文章</button>
+            </div>
+          </section>
+
+          <div class="detail-nav">
+            <button id="prevPost" class="mini-btn" type="button">上一篇</button>
+            <button id="nextPost" class="mini-btn" type="button">下一篇</button>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="view-about">
+        <h2 class="view-title">关于</h2>
+        <p class="view-sub" id="aboutRole">前端工程师 · 产品设计爱好者</p>
+
+        <div class="resume-grid">
+          <article class="resume-card" id="about-profile">
+            <h3 id="aboutName">你的名字</h3>
+            <p id="aboutSummary">专注 Web 前端、交互体验和创意实现，擅长将想法快速落地成可用产品。</p>
+            <div class="chips" id="aboutSkills">JavaScript, TypeScript, React, Node.js, Motion</div>
+          </article>
+
+          <article class="resume-card" id="about-exp">
+            <h4>经历</h4>
+            <div class="resume-item">
+              <p id="exp1Title">前端工程师 @ 某科技公司</p>
+              <p id="exp1Time" class="muted">2023 - 至今</p>
+              <p id="exp1Desc">负责核心业务系统重构，性能优化 40%+，搭建组件体系和可视化页面编辑方案。</p>
+            </div>
+            <div class="resume-item">
+              <p id="exp2Title">自由创作者</p>
+              <p id="exp2Time" class="muted">2021 - 2023</p>
+              <p id="exp2Desc">完成多个品牌网站与交互动效项目，聚焦叙事型体验设计。</p>
+            </div>
+          </article>
+
+          <article class="resume-card" id="about-edu">
+            <h4>教育</h4>
+            <p id="eduInfo">某大学 · 计算机相关专业</p>
+            <h4>技能方向</h4>
+            <p id="focusInfo">前端架构 / 设计系统 / 动效体验 / 内容型产品</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-contact">
+        <h2 class="view-title">联系我</h2>
+        <div class="contact-toolbar" id="contact-toolbar">
+          <button id="newContactBtn" class="mini-btn" type="button">+ 新增联系</button>
+        </div>
+        <div class="contacts" id="contactList">
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer wrap">
+      <p id="footerLeft">© 2026 YOUR NAME</p>
+      <p id="footerRight">Design & Code by You</p>
+    </footer>
+
+    <div id="pageEditActions" class="edit-actions hidden">
+      <button id="cancelPageEdit" class="mini-btn" type="button">取消</button>
+      <button id="savePageEdit" class="primary-btn" type="button">保存当前页修改</button>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
