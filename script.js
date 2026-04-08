@@ -236,15 +236,21 @@ function buildSiteData() {
 
 async function loadSiteDataFromFile() {
   try {
-    const hasLocalCfg = !!localStorage.getItem(STORAGE_CFG);
-    const hasLocalPosts = !!localStorage.getItem(STORAGE_POSTS);
-    const hasLocalWorks = !!localStorage.getItem(STORAGE_WORKS);
     const res = await fetch(`./${SITE_DATA_FILE}?t=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) return;
     const remote = await res.json();
-    if (!hasLocalCfg && remote?.cfg) cfg = { ...cfg, ...remote.cfg };
-    if (!hasLocalPosts && Array.isArray(remote?.posts)) posts = remote.posts;
-    if (!hasLocalWorks && Array.isArray(remote?.works)) works = remote.works;
+    if (remote?.cfg) {
+      cfg = { ...defaults, ...remote.cfg };
+      saveCfg();
+    }
+    if (Array.isArray(remote?.posts)) {
+      posts = remote.posts;
+      savePosts();
+    }
+    if (Array.isArray(remote?.works)) {
+      works = remote.works;
+      saveWorks();
+    }
   } catch {}
 }
 
