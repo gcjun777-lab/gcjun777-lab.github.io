@@ -292,7 +292,8 @@ body {
 
 .hero-meta {
   color: var(--muted);
-  margin-top: 8px;
+  margin-top: 12px;
+  line-height: 1.8;
 }
 
 .kicker {
@@ -315,6 +316,7 @@ body {
   color: var(--muted);
   font-size: clamp(1rem, 2vw, 1.35rem);
   max-width: 760px;
+  line-height: 1.9;
 }
 
 .home-sections {
@@ -491,6 +493,21 @@ select {
   gap: 16px;
 }
 
+.about-contact-block {
+  margin-top: 28px;
+}
+
+.about-contact-head {
+  margin-bottom: 18px;
+}
+
+.about-contact-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
 .resume-item {
   border-top: 1px dashed var(--line);
   padding-top: 10px;
@@ -509,6 +526,8 @@ select {
 .contact-card {
   text-decoration: none;
   color: inherit;
+  display: grid;
+  gap: 10px;
 }
 
 .contact-actions {
@@ -516,6 +535,26 @@ select {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.contact-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.contact-icon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--line);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1;
 }
 
 .inline-edit {
@@ -651,6 +690,16 @@ select {
 }
 
 @media (max-width: 780px) {
+  .topbar.is-hidden-mobile {
+    transform: translateY(calc(-100% - 6px));
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .topbar {
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+
   .blog-toolbar,
   .cards,
   .cards.two-col,
@@ -664,7 +713,7 @@ select {
   }
 
   .page {
-    padding-top: 40px;
+    padding-top: 46px;
   }
 
   .topbar-inner {
@@ -740,7 +789,7 @@ select {
     grid-template-areas:
       "heading heading"
       "profile copy";
-    gap: 14px 16px;
+    gap: 18px 18px;
     align-items: start;
   }
 
@@ -764,7 +813,7 @@ select {
   .hero-title {
     margin-top: 6px;
     font-size: clamp(2.45rem, 13.6vw, 3.9rem);
-    line-height: 0.92;
+    line-height: 1.02;
     white-space: nowrap;
   }
 
@@ -777,7 +826,7 @@ select {
   .hero-sub {
     margin-top: 0;
     font-size: 0.98rem;
-    line-height: 1.7;
+    line-height: 1.95;
   }
 
   .hero-meta,
@@ -785,11 +834,39 @@ select {
   .post-meta,
   .muted {
     font-size: 0.95rem;
-    line-height: 1.7;
+    line-height: 1.9;
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: 8px;
+    align-content: start;
   }
 
   .view-title {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
+  }
+
+  .about-contact-block {
+    margin-top: 34px;
+  }
+
+  .about-contact-head {
+    margin-bottom: 22px;
+  }
+
+  .about-contact-title {
+    font-size: 1.55rem;
+  }
+
+  .contact-card {
+    padding: 20px 18px;
+    gap: 12px;
+  }
+
+  .contact-card p {
+    margin: 0;
+    line-height: 1.9;
   }
 
   .blog-toolbar {

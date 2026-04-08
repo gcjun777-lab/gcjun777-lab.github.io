@@ -184,6 +184,8 @@ let postAutosaveTimer = null;
 let workAutosaveTimer = null;
 let remoteSyncTimer = null;
 let langToggleBurst = { count: 0, timer: null };
+let lastScrollY = 0;
+let mobileHeaderLocked = false;
 
 function load(key, fallback) {
   try {
@@ -847,10 +849,24 @@ function renderHomeSections() {
 function renderContacts() {
   const list = Array.isArray(cfg.contacts) ? cfg.contacts : [];
   const manageHidden = isAdmin ? "" : "hidden";
+  const iconForContact = (item) => {
+    const title = String(item.title || "").toLowerCase();
+    const value = String(item.value || "").toLowerCase();
+    const url = String(item.url || "").toLowerCase();
+    if (title.includes("mail") || value.includes("@") || url.startsWith("mailto:")) return "@";
+    if (title.includes("github") || url.includes("github.com")) return "GH";
+    if (title.includes("bilibili") || url.includes("bilibili.com")) return "B";
+    if (title.includes("微信")) return "WX";
+    if (title.includes("小红书")) return "HS";
+    return "↗";
+  };
   $("contactList").innerHTML = list
     .map(
       (item) => `<article class="contact-card contact-dynamic" data-contact-id="${item.id}">
-        <h3>${item.title}</h3>
+        <div class="contact-head">
+          <h3>${item.title}</h3>
+          <span class="contact-icon" aria-hidden="true">${iconForContact(item)}</span>
+        </div>
         <p>${item.value}</p>
         <div class="contact-actions">
           <button class="mini-btn" data-contact-action="open" type="button">打开</button>
@@ -862,6 +878,30 @@ function renderContacts() {
     .join("");
   $("newContactBtn").classList.toggle("hidden", !isAdmin);
   if (currentTab === "about") animateCurrentView();
+}
+
+function handleMobileHeaderVisibility() {
+  const topbar = document.querySelector(".topbar");
+  if (!topbar) return;
+  if (window.innerWidth > 780) {
+    topbar.classList.remove("is-hidden-mobile");
+    mobileHeaderLocked = false;
+    lastScrollY = window.scrollY;
+    return;
+  }
+  const currentY = window.scrollY;
+  const delta = currentY - lastScrollY;
+  if (currentY < 32) {
+    topbar.classList.remove("is-hidden-mobile");
+    mobileHeaderLocked = false;
+  } else if (delta > 14 && !mobileHeaderLocked) {
+    topbar.classList.add("is-hidden-mobile");
+    mobileHeaderLocked = true;
+  } else if (delta < -22) {
+    topbar.classList.remove("is-hidden-mobile");
+    mobileHeaderLocked = false;
+  }
+  lastScrollY = currentY;
 }
 
 function openPostDetail(id) {
@@ -1378,7 +1418,9 @@ function bind() {
     if (currentTab === "dashboard" || currentTab === "about") {
       syncSideProgress();
     }
+    handleMobileHeaderVisibility();
   });
+  window.addEventListener("resize", handleMobileHeaderVisibility);
 }
 
 async function init() {
@@ -1401,6 +1443,7 @@ async function init() {
   switchTab("dashboard");
   bind();
   applyAdminVisibility();
+  handleMobileHeaderVisibility();
 }
 
 init();
