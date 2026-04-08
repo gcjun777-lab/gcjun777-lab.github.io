@@ -4,7 +4,9 @@ const STORAGE_WORKS = "works_v8";
 const STORAGE_THEME = "theme_v8";
 const STORAGE_LANG = "lang_v8";
 const STORAGE_ADMIN = "admin_session_v1";
-const ADMIN_PASSWORD_SHA256 = "8d1351a6affc3da660df58f54220518f13cdb2c58922adab039b1b99664a506e";
+const STORAGE_SYNC = "github_sync_v1";
+const ADMIN_PASSWORD_SHA256 = "6b00066e4e4c00ba34c7eee0d7c857563ec3a40e630d9270ba06b9ee1ee45deb";
+const SITE_DATA_FILE = "site-data.json";
 
 const defaults = {
   brand: "YOUR NAME",
@@ -53,7 +55,29 @@ const defaultPosts = [
     markdown:
       "# Weekly Report\n\n这是一篇周报示例。\n\n- 完成博客页面重构\n- 优化文章卡片交互\n\n![示例图片](https://picsum.photos/900/420)",
   },
+  {
+    id: "proj-li-zhi-badge-maker",
+    title: "项目复盘：离职厂牌制作助手（li-zhi-badge-maker）",
+    excerpt: "一个基于 Python + PySide6 + Pillow 的桌面 GUI 工具，支持批量导入人物图并自动生成离职厂牌。",
+    tags: ["project", "python", "gui", "automation"],
+    date: "2026-04-08",
+    cover: "https://opengraph.githubassets.com/1/gcjun777-lab/li-zhi-badge-maker",
+    markdown:
+      "# 项目复盘：离职厂牌制作助手\n\n这个项目的目标很明确：把“离职厂牌”这种重复性很高的设计任务，做成可批量处理的工具流程。\n\n## 我做了什么\n\n- 用 **Python + PySide6 + Pillow** 搭建桌面 GUI\n- 支持批量导入透明人物图片，自动生成记录列表\n- 在界面里逐条编辑姓名、天数、主文案和副文案\n- 自动合成图层：背景 -> 人物 -> 覆盖层 -> 文字\n- 提供人物微调参数（缩放、X 偏移、Y 偏移）\n- 支持工程文件 JSON 的保存和加载\n- 支持命令行读取工程批量导出\n\n## 工程化能力\n\n除了本地 GUI，我还做了完整发布链路：\n\n- GitHub Actions 的 Windows 打包工作流\n- 通过标签触发 Release 发布\n- 自动产出 GUI EXE 包\n\n这让项目从“本地脚本”变成了可交付、可复用的小产品。\n\n## 经验总结\n\n1. 把“高频重复动作”产品化，价值会非常直观。\n2. GUI 不是终点，完整的打包发布流程同样重要。\n3. 结构化工程文件（JSON）是可维护性的关键。\n\n项目地址：\n\n- [li-zhi-badge-maker](https://github.com/gcjun777-lab/li-zhi-badge-maker)",
+  },
+  {
+    id: "proj-monthly-star-helper",
+    title: "项目复盘：月度之星海报生成器（monthly-star-helper）",
+    excerpt: "面向运营场景的海报批处理工具：自动抠图合成、文件名规范驱动、并支持 Actions 自动构建 EXE 与安装包。",
+    tags: ["project", "python", "poster", "github-actions"],
+    date: "2026-04-08",
+    cover: "https://opengraph.githubassets.com/1/gcjun777-lab/monthly-star-helper",
+    markdown:
+      "# 项目复盘：月度之星海报生成器\n\n这个项目聚焦一个真实需求：每月要批量制作“月度之星”个人海报，手工处理成本高、易出错。\n\n## 关键能力\n\n- 双击启动 GUI，不弹命令行窗口\n- 自动抠图并合成海报\n- 默认使用程序同目录下的输入/输出目录\n- 支持自定义输入目录、输出目录、模板和字体\n\n## 规范化输入\n\n为了稳定批处理，我设计了文件名规则：\n\n- `部门-姓名-YYYYMM`\n- 例如：`制造部-张三-202603.jpg`\n\n通过这条规则，流程可以自动识别并减少人工校对成本。\n\n## 发布与交付\n\n项目不仅能本地运行，还接入了自动化发布：\n\n- GitHub Actions 在 Windows Runner 自动构建\n- 自动下载模型、打包 GUI EXE\n- 使用 Inno Setup 生成安装包\n- 自动创建 Release 并上传产物\n\n## 经验总结\n\n1. 对运营类工具而言，“输入规范”比“功能堆叠”更重要。\n2. 自动化打包与发布，是让工具持续可用的核心。\n3. 做成 EXE 和安装包后，团队落地效率明显提升。\n\n项目地址：\n\n- [monthly-star-helper](https://github.com/gcjun777-lab/monthly-star-helper)",
+  },
 ];
+
+const projectSeedPosts = defaultPosts.filter((p) => p.id.startsWith("proj-"));
 
 const defaultWorks = [
   {
@@ -157,6 +181,10 @@ let currentPostId = null;
 let currentWorkId = null;
 let pageEditing = false;
 let isAdmin = false;
+let configAutosaveTimer = null;
+let postAutosaveTimer = null;
+let workAutosaveTimer = null;
+let remoteSyncTimer = null;
 
 function load(key, fallback) {
   try {
@@ -182,19 +210,155 @@ function saveWorks() {
   localStorage.setItem(STORAGE_WORKS, JSON.stringify(works));
 }
 
+function getDefaultSyncConfig() {
+  const host = window.location.hostname || "";
+  const owner = host.endsWith(".github.io") ? host.replace(".github.io", "") : "gcjun777-lab";
+  return {
+    owner,
+    repo: `${owner}.github.io`,
+    branch: "main",
+    path: SITE_DATA_FILE,
+    token: "",
+  };
+}
+
+function getSyncConfig() {
+  const saved = load(STORAGE_SYNC, getDefaultSyncConfig());
+  return { ...getDefaultSyncConfig(), ...saved };
+}
+
+function saveSyncConfig(cfgValue) {
+  localStorage.setItem(STORAGE_SYNC, JSON.stringify(cfgValue));
+}
+
+function buildSiteData() {
+  return { cfg, posts, works };
+}
+
+async function loadSiteDataFromFile() {
+  try {
+    const hasLocalCfg = !!localStorage.getItem(STORAGE_CFG);
+    const hasLocalPosts = !!localStorage.getItem(STORAGE_POSTS);
+    const hasLocalWorks = !!localStorage.getItem(STORAGE_WORKS);
+    const res = await fetch(`./${SITE_DATA_FILE}?t=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) return;
+    const remote = await res.json();
+    if (!hasLocalCfg && remote?.cfg) cfg = { ...cfg, ...remote.cfg };
+    if (!hasLocalPosts && Array.isArray(remote?.posts)) posts = remote.posts;
+    if (!hasLocalWorks && Array.isArray(remote?.works)) works = remote.works;
+  } catch {}
+}
+
+async function syncSiteDataToGitHub(message = "Update site data") {
+  const syncCfg = getSyncConfig();
+  if (!syncCfg.token) return { ok: false, reason: "missing_token" };
+
+  const apiUrl = `https://api.github.com/repos/${syncCfg.owner}/${syncCfg.repo}/contents/${syncCfg.path}`;
+  const headers = {
+    Authorization: `Bearer ${syncCfg.token}`,
+    Accept: "application/vnd.github+json",
+  };
+
+  let sha = null;
+  const current = await fetch(apiUrl, { headers });
+  if (current.ok) {
+    const body = await current.json();
+    sha = body.sha || null;
+  }
+
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(JSON.stringify(buildSiteData(), null, 2));
+  let binary = "";
+  bytes.forEach((b) => {
+    binary += String.fromCharCode(b);
+  });
+  const content = btoa(binary);
+
+  const payload = {
+    message,
+    content,
+    branch: syncCfg.branch,
+  };
+  if (sha) payload.sha = sha;
+
+  const res = await fetch(apiUrl, {
+    method: "PUT",
+    headers: {
+      ...headers,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  return res.ok ? { ok: true } : { ok: false, reason: "request_failed" };
+}
+
+function persistAll(message = "Update site data", sync = true) {
+  saveCfg();
+  savePosts();
+  saveWorks();
+  if (!sync) return;
+  clearTimeout(remoteSyncTimer);
+  setAutosaveStatus("已本地保存，准备同步 GitHub...", "pending");
+  remoteSyncTimer = setTimeout(async () => {
+    const result = await syncSiteDataToGitHub(message);
+    const text = result.ok
+      ? "已同步到 GitHub"
+      : result.reason === "missing_token"
+        ? "已本地保存，点击“同步设置”连接 GitHub"
+        : "已本地保存，但本次同步 GitHub 失败";
+    setAutosaveStatus(text, result.ok ? "success" : result.reason === "missing_token" ? "idle" : "pending");
+  }, 1200);
+}
+
 async function sha256(text) {
   const data = new TextEncoder().encode(String(text || ""));
   const digest = await crypto.subtle.digest("SHA-256", data);
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+function setAutosaveStatus(text, tone = "idle") {
+  const el = $("autosaveStatus");
+  if (!el) return;
+  el.textContent = text;
+  el.dataset.state = tone;
+}
+
+function scheduleConfigAutosave() {
+  if (!isAdmin || !pageEditing) return;
+  clearTimeout(configAutosaveTimer);
+  setAutosaveStatus("正在输入，准备自动保存...", "pending");
+  configAutosaveTimer = setTimeout(() => {
+    saveCurrentPageEdit(true);
+  }, 450);
+}
+
+function schedulePostAutosave() {
+  if (!isAdmin) return;
+  clearTimeout(postAutosaveTimer);
+  setAutosaveStatus("正在输入，准备自动保存...", "pending");
+  postAutosaveTimer = setTimeout(() => {
+    saveInlinePostEditor(true);
+  }, 500);
+}
+
+function scheduleWorkAutosave() {
+  if (!isAdmin) return;
+  clearTimeout(workAutosaveTimer);
+  setAutosaveStatus("正在输入，准备自动保存...", "pending");
+  workAutosaveTimer = setTimeout(() => {
+    saveInlineWorkEditor(true);
+  }, 500);
+}
+
 function applyAdminVisibility() {
   const ids = ["togglePageEdit", "openPostModal", "newPostQuick", "newWorkBtn"];
   ids.forEach((id) => $(id)?.classList.toggle("hidden", !isAdmin));
+  $("syncSetupBtn").classList.toggle("hidden", !isAdmin);
   $("adminToggle").textContent = isAdmin ? "退出管理" : "管理解锁";
   if (!isAdmin && pageEditing) {
     closePageEditor();
   }
+  setAutosaveStatus(isAdmin ? "自动保存已开启" : "自动保存已关闭", isAdmin ? "success" : "idle");
   renderContacts();
 }
 
@@ -217,6 +381,24 @@ async function toggleAdminMode() {
   applyAdminVisibility();
 }
 
+async function configureGitHubSync() {
+  if (!isAdmin) return;
+  const current = getSyncConfig();
+  const owner = (prompt("GitHub 用户名", current.owner) || "").trim();
+  if (!owner) return;
+  const repo = (prompt("仓库名", current.repo) || "").trim();
+  if (!repo) return;
+  const branch = (prompt("分支名", current.branch) || "").trim() || "main";
+  const path = (prompt("同步文件路径", current.path) || "").trim() || SITE_DATA_FILE;
+  const tokenHint = current.token ? "已配置，直接确定可保留" : "";
+  const token = prompt(`GitHub PAT（需要仓库 contents 读写权限）${tokenHint}`, current.token || "") || "";
+  const next = { owner, repo, branch, path, token: token.trim() };
+  saveSyncConfig(next);
+  setAutosaveStatus("GitHub 同步设置已保存", "success");
+  const result = await syncSiteDataToGitHub("Initialize site data sync");
+  setAutosaveStatus(result.ok ? "已同步到 GitHub" : "同步设置已保存，但首次同步失败", result.ok ? "success" : "pending");
+}
+
 function normalizeContactUrl(url, value) {
   const trimmedUrl = String(url || "").trim();
   const trimmedValue = String(value || "").trim();
@@ -232,6 +414,18 @@ function ensureContacts() {
     { id: "c2", title: "Bilibili", value: cfg.biliName || "@yourid", url: cfg.biliUrl || "https://www.bilibili.com/" },
     { id: "c3", title: "GitHub", value: cfg.githubName || "@yourid", url: cfg.githubUrl || "https://github.com/" },
   ];
+}
+
+function ensureProjectPosts() {
+  if (!Array.isArray(posts)) posts = [];
+  let changed = false;
+  projectSeedPosts.forEach((seed) => {
+    if (!posts.some((p) => p.id === seed.id)) {
+      posts.unshift(seed);
+      changed = true;
+    }
+  });
+  if (changed) savePosts();
 }
 
 function applyCfg() {
@@ -281,6 +475,7 @@ function closePageEditor() {
   pageEditing = false;
   Object.values(editableMap).forEach((ids) => setEditable(ids, false));
   updateEditHints(false);
+  clearTimeout(configAutosaveTimer);
 }
 
 function openPageEditor() {
@@ -296,9 +491,10 @@ function openPageEditor() {
   pageEditing = true;
   setEditable(editableMap[currentTab] || [], true);
   updateEditHints(true);
+  setAutosaveStatus("自动保存已开启", "success");
 }
 
-function saveCurrentPageEdit() {
+function saveCurrentPageEdit(keepEditing = false) {
   if (!isAdmin) return;
   if (!pageEditing) return;
 
@@ -333,9 +529,12 @@ function saveCurrentPageEdit() {
   cfg.footerLeft = $("footerLeft").textContent.trim() || cfg.footerLeft;
   cfg.footerRight = $("footerRight").textContent.trim() || cfg.footerRight;
 
-  saveCfg();
+  persistAll(`Update ${currentTab} page`);
   applyCfg();
-  closePageEditor();
+  setAutosaveStatus("已自动保存", "success");
+  if (!keepEditing) {
+    closePageEditor();
+  }
 }
 
 function markSideProgressActive(anchorId) {
@@ -770,11 +969,11 @@ function openInlineWorkEditor(isNew = false) {
   $("workInlineEditor").classList.remove("hidden");
 }
 
-function saveInlinePostEditor() {
+function saveInlinePostEditor(keepEditing = false) {
   const title = $("inlinePostTitle").value.trim();
   const markdown = $("inlinePostMarkdown").value.trim();
   if (!title || !markdown) {
-    alert("标题和正文不能为空");
+    if (!keepEditing) alert("标题和正文不能为空");
     return;
   }
 
@@ -791,24 +990,29 @@ function saveInlinePostEditor() {
     const newPost = { id: `p${Date.now()}`, date: new Date().toISOString().slice(0, 10), ...payload };
     posts.unshift(newPost);
     currentPostId = newPost.id;
+    $("inlineSaveBtn").dataset.mode = "edit";
+    $("inlineDeleteBtn").classList.remove("hidden");
+    $("inlineEditorTitle").textContent = "编辑文章（当前页）";
   } else {
     const idx = posts.findIndex((x) => x.id === currentPostId);
     if (idx < 0) return;
     posts[idx] = { ...posts[idx], ...payload };
   }
 
-  savePosts();
+  persistAll(isCreate ? "Create post" : `Update post ${currentPostId}`);
   renderTagFilter("blogTagFilter", posts);
   renderPosts();
   renderHomeSections();
+  setAutosaveStatus("文章已自动保存", "success");
+  if (keepEditing) return;
   openPostDetail(currentPostId);
 }
 
-function saveInlineWorkEditor() {
+function saveInlineWorkEditor(keepEditing = false) {
   const title = $("workInlineTitle").value.trim();
   const markdown = $("workInlineMarkdown").value.trim();
   if (!title || !markdown) {
-    alert("标题和正文不能为空");
+    if (!keepEditing) alert("标题和正文不能为空");
     return;
   }
 
@@ -825,16 +1029,21 @@ function saveInlineWorkEditor() {
     const newWork = { id: `w${Date.now()}`, date: new Date().toISOString().slice(0, 10), ...payload };
     works.unshift(newWork);
     currentWorkId = newWork.id;
+    $("workInlineSaveBtn").dataset.mode = "edit";
+    $("workInlineDeleteBtn").classList.remove("hidden");
+    $("workInlineEditorTitle").textContent = "编辑作品（当前页）";
   } else {
     const idx = works.findIndex((x) => x.id === currentWorkId);
     if (idx < 0) return;
     works[idx] = { ...works[idx], ...payload };
   }
 
-  saveWorks();
+  persistAll(isCreate ? "Create work" : `Update work ${currentWorkId}`);
   renderTagFilter("workTagFilter", works);
   renderWorks();
   renderHomeSections();
+  setAutosaveStatus("作品已自动保存", "success");
+  if (keepEditing) return;
   openWorkDetail(currentWorkId);
 }
 
@@ -842,7 +1051,7 @@ function deleteCurrentPost() {
   if (!currentPostId) return;
   if (!confirm("确认删除这篇文章？")) return;
   posts = posts.filter((x) => x.id !== currentPostId);
-  savePosts();
+  persistAll(`Delete post ${currentPostId}`);
   renderTagFilter("blogTagFilter", posts);
   renderPosts();
   renderHomeSections();
@@ -857,7 +1066,7 @@ function deleteCurrentWork() {
   if (!currentWorkId) return;
   if (!confirm("确认删除这个作品？")) return;
   works = works.filter((x) => x.id !== currentWorkId);
-  saveWorks();
+  persistAll(`Delete work ${currentWorkId}`);
   renderTagFilter("workTagFilter", works);
   renderWorks();
   renderHomeSections();
@@ -872,6 +1081,9 @@ function bind() {
   tabBtns.forEach((btn) => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
   $("adminToggle").addEventListener("click", () => {
     toggleAdminMode();
+  });
+  $("syncSetupBtn").addEventListener("click", () => {
+    configureGitHubSync();
   });
 
   $("themeToggle").addEventListener("click", () => {
@@ -888,10 +1100,11 @@ function bind() {
   });
 
   $("togglePageEdit").addEventListener("click", openPageEditor);
-  $("savePageEdit").addEventListener("click", saveCurrentPageEdit);
+  $("savePageEdit").addEventListener("click", () => saveCurrentPageEdit(true));
   $("cancelPageEdit").addEventListener("click", () => {
     applyCfg();
     closePageEditor();
+    setAutosaveStatus("已取消未保存修改", "idle");
   });
 
   $("avatarFileInput").addEventListener("change", (e) => {
@@ -901,6 +1114,8 @@ function bind() {
     fr.onload = () => {
       cfg.avatar = fr.result;
       $("homeAvatar").src = cfg.avatar;
+      persistAll("Update avatar");
+      setAutosaveStatus("头像已自动保存", "success");
     };
     fr.readAsDataURL(file);
   });
@@ -913,8 +1128,9 @@ function bind() {
     if (!value) return;
     const url = normalizeContactUrl(prompt("链接地址（可留空自动识别）", ""), value);
     cfg.contacts.unshift({ id: `c${Date.now()}`, title, value, url });
-    saveCfg();
+    persistAll("Create contact");
     renderContacts();
+    setAutosaveStatus("联系方式已自动保存", "success");
   });
 
   $("contactList").addEventListener("click", (e) => {
@@ -941,15 +1157,17 @@ function bind() {
       if (!value) return;
       const url = normalizeContactUrl(prompt("链接地址", cur.url), value);
       cfg.contacts[idx] = { ...cur, title, value, url };
-      saveCfg();
+      persistAll("Edit contact");
       renderContacts();
+      setAutosaveStatus("联系方式已自动保存", "success");
       return;
     }
     if (action === "delete") {
       if (!confirm("确认删除这个联系方式？")) return;
       cfg.contacts.splice(idx, 1);
-      saveCfg();
+      persistAll("Delete contact");
       renderContacts();
+      setAutosaveStatus("联系方式已自动保存", "success");
     }
   });
 
@@ -957,6 +1175,15 @@ function bind() {
   $("blogTagFilter").addEventListener("change", renderPosts);
   $("workSearch").addEventListener("input", renderWorks);
   $("workTagFilter").addEventListener("change", renderWorks);
+  document.addEventListener("input", (e) => {
+    const target = e.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (!pageEditing) return;
+    const ids = editableMap[currentTab] || [];
+    if (ids.includes(target.id)) {
+      scheduleConfigAutosave();
+    }
+  });
 
   $("backToList").addEventListener("click", () => {
     $("blogDetail").classList.add("hidden");
@@ -987,6 +1214,10 @@ function bind() {
 
   $("inlinePostMarkdown").addEventListener("input", () => {
     $("inlineMarkdownPreview").innerHTML = renderMarkdown($("inlinePostMarkdown").value);
+    schedulePostAutosave();
+  });
+  ["inlinePostTitle", "inlinePostExcerpt", "inlinePostTags"].forEach((id) => {
+    $(id).addEventListener("input", schedulePostAutosave);
   });
   $("inlinePostCoverInput").addEventListener("change", (e) => {
     const file = e.target.files?.[0];
@@ -996,6 +1227,7 @@ function bind() {
       $("inlineCoverPreview").src = fr.result;
       $("inlineCoverPreview").dataset.value = fr.result;
       $("inlineCoverPreviewWrap").classList.remove("hidden");
+      schedulePostAutosave();
     };
     fr.readAsDataURL(file);
   });
@@ -1004,11 +1236,15 @@ function bind() {
     const file = e.target.files?.[0];
     if (!file) return;
     const fr = new FileReader();
-    fr.onload = () => insertImageAtCursor($("inlinePostMarkdown"), fr.result, $("inlineMarkdownPreview"));
+    fr.onload = () => {
+      insertImageAtCursor($("inlinePostMarkdown"), fr.result, $("inlineMarkdownPreview"));
+      schedulePostAutosave();
+    };
     fr.readAsDataURL(file);
   });
 
   $("inlineCancelBtn").addEventListener("click", () => {
+    clearTimeout(postAutosaveTimer);
     $("inlineEditor").classList.add("hidden");
     $("detailContent").classList.remove("hidden");
     $("detailTags").classList.remove("hidden");
@@ -1034,6 +1270,10 @@ function bind() {
 
   $("workInlineMarkdown").addEventListener("input", () => {
     $("workInlineMarkdownPreview").innerHTML = renderMarkdown($("workInlineMarkdown").value);
+    scheduleWorkAutosave();
+  });
+  ["workInlineTitle", "workInlineExcerpt", "workInlineTags"].forEach((id) => {
+    $(id).addEventListener("input", scheduleWorkAutosave);
   });
   $("workInlineCoverInput").addEventListener("change", (e) => {
     const file = e.target.files?.[0];
@@ -1043,6 +1283,7 @@ function bind() {
       $("workInlineCoverPreview").src = fr.result;
       $("workInlineCoverPreview").dataset.value = fr.result;
       $("workInlineCoverPreviewWrap").classList.remove("hidden");
+      scheduleWorkAutosave();
     };
     fr.readAsDataURL(file);
   });
@@ -1051,11 +1292,15 @@ function bind() {
     const file = e.target.files?.[0];
     if (!file) return;
     const fr = new FileReader();
-    fr.onload = () => insertImageAtCursor($("workInlineMarkdown"), fr.result, $("workInlineMarkdownPreview"));
+    fr.onload = () => {
+      insertImageAtCursor($("workInlineMarkdown"), fr.result, $("workInlineMarkdownPreview"));
+      scheduleWorkAutosave();
+    };
     fr.readAsDataURL(file);
   });
 
   $("workInlineCancelBtn").addEventListener("click", () => {
+    clearTimeout(workAutosaveTimer);
     $("workInlineEditor").classList.add("hidden");
     $("workDetailContent").classList.remove("hidden");
     $("workDetailTags").classList.remove("hidden");
@@ -1084,7 +1329,7 @@ function bind() {
   });
 }
 
-function init() {
+async function init() {
   const theme = localStorage.getItem(STORAGE_THEME) || "dark";
   document.documentElement.classList.toggle("dark", theme === "dark");
 
@@ -1093,6 +1338,8 @@ function init() {
   isAdmin = sessionStorage.getItem(STORAGE_ADMIN) === "1";
 
   ensureContacts();
+  ensureProjectPosts();
+  await loadSiteDataFromFile();
   applyCfg();
   renderTagFilter("blogTagFilter", posts);
   renderTagFilter("workTagFilter", works);

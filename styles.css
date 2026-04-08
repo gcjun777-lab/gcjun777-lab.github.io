@@ -35,18 +35,17 @@ body {
 
 .side-progress {
   position: fixed;
-  left: 24px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   display: grid;
   gap: 0;
   z-index: 25;
-  width: 190px;
-  padding: 16px 14px 16px 12px;
-  border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(8px);
+  width: 86px;
+  padding: 8px 6px;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
 }
 
 .side-title {
@@ -56,22 +55,18 @@ body {
 .side-list {
   position: relative;
   display: grid;
-  gap: 18px;
-  padding-left: 28px;
+  gap: 20px;
+  padding-left: 20px;
 }
 
 .side-list::before {
   content: "";
   position: absolute;
-  left: 9px;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--line) 96%, transparent) 0%,
-    color-mix(in srgb, var(--line) 72%, transparent) 100%
-  );
+  left: 4px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: color-mix(in srgb, var(--line) 82%, transparent);
   border-radius: 999px;
 }
 
@@ -81,44 +76,47 @@ body {
   background: transparent;
   color: var(--muted);
   border-radius: 0;
-  padding: 2px 18px 2px 0;
+  padding: 0 0 0 4px;
   cursor: pointer;
   transition: all 0.25s ease;
   text-align: left;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 0.02em;
-  line-height: 1.6;
+  line-height: 1.4;
+  opacity: 0.8;
+  max-width: 56px;
 }
 
 .progress-item::before {
   content: "";
   position: absolute;
-  left: -23px;
+  left: -19px;
   top: 50%;
   transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--bg);
-  border: 1.5px solid color-mix(in srgb, var(--line) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--line) 94%, transparent);
   transition: all 0.25s ease;
 }
 
 .progress-item.is-active,
 .progress-item:hover {
   color: var(--text);
-  transform: translateX(6px);
+  transform: translateX(3px);
+  opacity: 1;
 }
 
 .progress-item::after {
   content: "";
   position: absolute;
-  right: 0;
+  left: -8px;
   top: 50%;
   transform: translateY(-50%) scaleX(0);
   transform-origin: left center;
-  width: 12px;
+  width: 8px;
   height: 1px;
   background: color-mix(in srgb, var(--text) 70%, transparent);
   transition: transform 0.25s ease;
@@ -128,7 +126,7 @@ body {
 .progress-item:hover::before {
   border-color: var(--text);
   background: var(--text);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--text) 15%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--text) 12%, transparent);
 }
 
 .progress-item.is-active::after,
@@ -569,6 +567,25 @@ select {
   z-index: 90;
   display: flex;
   gap: 8px;
+  align-items: center;
+}
+
+.autosave-status {
+  border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  color: var(--muted);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.autosave-status[data-state="pending"] {
+  color: var(--text);
+}
+
+.autosave-status[data-state="success"] {
+  color: var(--text);
 }
 
 @media (max-width: 1200px) {

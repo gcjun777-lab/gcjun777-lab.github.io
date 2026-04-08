@@ -1,0 +1,105 @@
+﻿{
+  "cfg": {
+    "brand": "YOUR NAME",
+    "homeKicker": "PERSONAL WEBSITE",
+    "avatar": "https://picsum.photos/200",
+    "heroTitle": "作品集 · 博客",
+    "heroSubtitle": "极简、干净、可扩展。用于展示你的项目、文章和联系方式。",
+    "heroMeta": "前端开发者 / 创作者 / 上海",
+    "portfolioSubtitle": "精选项目展示区。",
+    "blogTitle": "博客",
+    "blogSubtitle": "支持搜索、标签筛选与 Markdown 阅读。",
+    "aboutRole": "前端工程师 · 产品设计爱好者",
+    "aboutName": "你的名字",
+    "aboutSummary": "专注 Web 前端、交互体验和创意实现，擅长将想法快速落地成可用产品。",
+    "aboutSkills": "JavaScript, TypeScript, React, Node.js, Motion",
+    "exp1Title": "前端工程师 @ 某科技公司",
+    "exp1Time": "2023 - 至今",
+    "exp1Desc": "负责核心业务系统重构，性能优化 40%+，搭建组件体系和可视化页面编辑方案。",
+    "exp2Title": "自由创作者",
+    "exp2Time": "2021 - 2023",
+    "exp2Desc": "完成多个品牌网站与交互动效项目，聚焦叙事型体验设计。",
+    "eduInfo": "某大学 · 计算机相关专业",
+    "focusInfo": "前端架构 / 设计系统 / 动效体验 / 内容型产品",
+    "contacts": [
+      {
+        "id": "c1",
+        "title": "Email",
+        "value": "you@example.com",
+        "url": "mailto:you@example.com"
+      },
+      {
+        "id": "c2",
+        "title": "Bilibili",
+        "value": "@yourid",
+        "url": "https://www.bilibili.com/"
+      },
+      {
+        "id": "c3",
+        "title": "GitHub",
+        "value": "@yourid",
+        "url": "https://github.com/"
+      }
+    ],
+    "footerLeft": "© 2026 YOUR NAME",
+    "footerRight": "Design & Code by You"
+  },
+  "posts": [
+    {
+      "id": "p1",
+      "title": "Weekly Report | 25/12/01~25/12/07",
+      "excerpt": "本周学习与创作记录，包括前端优化和设计迭代。",
+      "tags": ["weekly", "notes"],
+      "date": "2025-12-09",
+      "cover": "",
+      "markdown": "# Weekly Report\n\n这是一篇周报示例。\n\n- 完成博客页面重构\n- 优化文章卡片交互\n\n![示例图片](https://picsum.photos/900/420)"
+    },
+    {
+      "id": "proj-li-zhi-badge-maker",
+      "title": "项目复盘：离职厂牌制作助手（li-zhi-badge-maker）",
+      "excerpt": "一个基于 Python + PySide6 + Pillow 的桌面 GUI 工具，支持批量导入人物图并自动生成离职厂牌。",
+      "tags": ["project", "python", "gui", "automation"],
+      "date": "2026-04-08",
+      "cover": "https://opengraph.githubassets.com/1/gcjun777-lab/li-zhi-badge-maker",
+      "markdown": "# 项目复盘：离职厂牌制作助手\n\n这个项目的目标很明确：把“离职厂牌”这种重复性很高的设计任务，做成可批量处理的工具流程。\n\n## 我做了什么\n\n- 用 **Python + PySide6 + Pillow** 搭建桌面 GUI\n- 支持批量导入透明人物图片，自动生成记录列表\n- 在界面里逐条编辑姓名、天数、主文案和副文案\n- 自动合成图层：背景 -> 人物 -> 覆盖层 -> 文字\n- 提供人物微调参数（缩放、X 偏移、Y 偏移）\n- 支持工程文件 JSON 的保存和加载\n- 支持命令行读取工程批量导出\n\n## 工程化能力\n\n除了本地 GUI，我还做了完整发布链路：\n\n- GitHub Actions 的 Windows 打包工作流\n- 通过标签触发 Release 发布\n- 自动产出 GUI EXE 包\n\n这让项目从“本地脚本”变成了可交付、可复用的小产品。\n\n## 经验总结\n\n1. 把“高频重复动作”产品化，价值会非常直观。\n2. GUI 不是终点，完整的打包发布流程同样重要。\n3. 结构化工程文件（JSON）是可维护性的关键。\n\n项目地址：\n\n- [li-zhi-badge-maker](https://github.com/gcjun777-lab/li-zhi-badge-maker)"
+    },
+    {
+      "id": "proj-monthly-star-helper",
+      "title": "项目复盘：月度之星海报生成器（monthly-star-helper）",
+      "excerpt": "面向运营场景的海报批处理工具：自动抠图合成、文件名规范驱动、并支持 Actions 自动构建 EXE 与安装包。",
+      "tags": ["project", "python", "poster", "github-actions"],
+      "date": "2026-04-08",
+      "cover": "https://opengraph.githubassets.com/1/gcjun777-lab/monthly-star-helper",
+      "markdown": "# 项目复盘：月度之星海报生成器\n\n这个项目聚焦一个真实需求：每月要批量制作“月度之星”个人海报，手工处理成本高、易出错。\n\n## 关键能力\n\n- 双击启动 GUI，不弹命令行窗口\n- 自动抠图并合成海报\n- 默认使用程序同目录下的输入/输出目录\n- 支持自定义输入目录、输出目录、模板和字体\n\n## 规范化输入\n\n为了稳定批处理，我设计了文件名规则：\n\n- `部门-姓名-YYYYMM`\n- 例如：`制造部-张三-202603.jpg`\n\n通过这条规则，流程可以自动识别并减少人工校对成本。\n\n## 发布与交付\n\n项目不仅能本地运行，还接入了自动化发布：\n\n- GitHub Actions 在 Windows Runner 自动构建\n- 自动下载模型、打包 GUI EXE\n- 使用 Inno Setup 生成安装包\n- 自动创建 Release 并上传产物\n\n## 经验总结\n\n1. 对运营类工具而言，“输入规范”比“功能堆叠”更重要。\n2. 自动化打包与发布，是让工具持续可用的核心。\n3. 做成 EXE 和安装包后，团队落地效率明显提升。\n\n项目地址：\n\n- [monthly-star-helper](https://github.com/gcjun777-lab/monthly-star-helper)"
+    }
+  ],
+  "works": [
+    {
+      "id": "w1",
+      "title": "Portfolio System",
+      "excerpt": "可视化编辑的个人站点系统。",
+      "tags": ["web", "design"],
+      "date": "2026-01-12",
+      "cover": "https://picsum.photos/900/500?random=31",
+      "markdown": "# Portfolio System\n\n一个支持多页面编辑、博客写作和作品展示的个人网站模板。\n\n- 当前页直接编辑\n- 文章 Markdown 支持\n- 统一暗色视觉风格"
+    },
+    {
+      "id": "w2",
+      "title": "Motion Landing",
+      "excerpt": "叙事型动效着陆页。",
+      "tags": ["motion", "landing"],
+      "date": "2025-11-02",
+      "cover": "https://picsum.photos/900/500?random=28",
+      "markdown": "# Motion Landing\n\n以滚动节奏构建品牌故事，强调视觉冲击与转化效率。"
+    },
+    {
+      "id": "w3",
+      "title": "Data Dashboard",
+      "excerpt": "企业数据看板与组件体系。",
+      "tags": ["dashboard", "react"],
+      "date": "2025-09-18",
+      "cover": "https://picsum.photos/900/500?random=23",
+      "markdown": "# Data Dashboard\n\n支持多角色权限和实时指标查询的仪表盘系统。"
+    }
+  ]
+}
