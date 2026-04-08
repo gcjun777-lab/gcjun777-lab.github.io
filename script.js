@@ -181,10 +181,12 @@ let currentPostId = null;
 let currentWorkId = null;
 let pageEditing = false;
 let isAdmin = false;
+let adminEntryVisible = false;
 let configAutosaveTimer = null;
 let postAutosaveTimer = null;
 let workAutosaveTimer = null;
 let remoteSyncTimer = null;
+let langToggleBurst = { count: 0, timer: null };
 
 function load(key, fallback) {
   try {
@@ -345,12 +347,35 @@ function applyAdminVisibility() {
   const ids = ["togglePageEdit", "openPostModal", "newPostQuick", "newWorkBtn"];
   ids.forEach((id) => $(id)?.classList.toggle("hidden", !isAdmin));
   $("syncSetupBtn").classList.toggle("hidden", !isAdmin);
+  $("adminToggle").classList.toggle("hidden", !adminEntryVisible && !isAdmin);
   $("adminToggle").textContent = isAdmin ? "退出管理" : "管理解锁";
+  $("editCurrentPost")?.classList.toggle("hidden", !isAdmin);
+  $("editCurrentWork")?.classList.toggle("hidden", !isAdmin);
+  $("inlineDeleteBtn")?.classList.toggle("hidden", !isAdmin || $("inlineSaveBtn").dataset.mode === "create");
+  $("workInlineDeleteBtn")?.classList.toggle("hidden", !isAdmin || $("workInlineSaveBtn").dataset.mode === "create");
   if (!isAdmin && pageEditing) {
     closePageEditor();
   }
   setAutosaveStatus(isAdmin ? "手动保存模式已开启" : "编辑功能已关闭", isAdmin ? "success" : "idle");
   renderContacts();
+}
+
+function revealAdminEntry() {
+  adminEntryVisible = true;
+  $("adminToggle").classList.remove("hidden");
+  setAutosaveStatus("已显示管理入口", "idle");
+}
+
+function bumpAdminRevealCounter() {
+  langToggleBurst.count += 1;
+  clearTimeout(langToggleBurst.timer);
+  langToggleBurst.timer = setTimeout(() => {
+    langToggleBurst.count = 0;
+  }, 1200);
+  if (langToggleBurst.count >= 3) {
+    langToggleBurst.count = 0;
+    revealAdminEntry();
+  }
 }
 
 async function toggleAdminMode() {
@@ -901,6 +926,10 @@ function insertImageAtCursor(textarea, dataUrl, previewEl) {
 }
 
 function openInlinePostEditor(isNew = false) {
+  if (!isAdmin) {
+    alert("请先通过管理解锁后再编辑文章");
+    return;
+  }
   const post = isNew
     ? { title: "", excerpt: "", tags: [], markdown: "", cover: "" }
     : posts.find((x) => x.id === currentPostId);
@@ -921,7 +950,7 @@ function openInlinePostEditor(isNew = false) {
     $("inlineCoverPreviewWrap").classList.add("hidden");
   }
 
-  $("inlineDeleteBtn").classList.toggle("hidden", isNew);
+  $("inlineDeleteBtn").classList.toggle("hidden", isNew || !isAdmin);
   $("inlineSaveBtn").dataset.mode = isNew ? "create" : "edit";
 
   $("detailContent").classList.add("hidden");
@@ -931,6 +960,10 @@ function openInlinePostEditor(isNew = false) {
 }
 
 function openInlineWorkEditor(isNew = false) {
+  if (!isAdmin) {
+    alert("请先通过管理解锁后再编辑作品");
+    return;
+  }
   const work = isNew
     ? { title: "", excerpt: "", tags: [], markdown: "", cover: "" }
     : works.find((x) => x.id === currentWorkId);
@@ -951,7 +984,7 @@ function openInlineWorkEditor(isNew = false) {
     $("workInlineCoverPreviewWrap").classList.add("hidden");
   }
 
-  $("workInlineDeleteBtn").classList.toggle("hidden", isNew);
+  $("workInlineDeleteBtn").classList.toggle("hidden", isNew || !isAdmin);
   $("workInlineSaveBtn").dataset.mode = isNew ? "create" : "edit";
 
   $("workDetailContent").classList.add("hidden");
@@ -961,6 +994,10 @@ function openInlineWorkEditor(isNew = false) {
 }
 
 function saveInlinePostEditor(keepEditing = false) {
+  if (!isAdmin) {
+    alert("请先通过管理解锁后再保存文章");
+    return;
+  }
   const title = $("inlinePostTitle").value.trim();
   const markdown = $("inlinePostMarkdown").value.trim();
   if (!title || !markdown) {
@@ -982,7 +1019,7 @@ function saveInlinePostEditor(keepEditing = false) {
     posts.unshift(newPost);
     currentPostId = newPost.id;
     $("inlineSaveBtn").dataset.mode = "edit";
-    $("inlineDeleteBtn").classList.remove("hidden");
+    $("inlineDeleteBtn").classList.toggle("hidden", !isAdmin);
     $("inlineEditorTitle").textContent = "编辑文章（当前页）";
   } else {
     const idx = posts.findIndex((x) => x.id === currentPostId);
@@ -1000,6 +1037,10 @@ function saveInlinePostEditor(keepEditing = false) {
 }
 
 function saveInlineWorkEditor(keepEditing = false) {
+  if (!isAdmin) {
+    alert("请先通过管理解锁后再保存作品");
+    return;
+  }
   const title = $("workInlineTitle").value.trim();
   const markdown = $("workInlineMarkdown").value.trim();
   if (!title || !markdown) {
@@ -1021,7 +1062,7 @@ function saveInlineWorkEditor(keepEditing = false) {
     works.unshift(newWork);
     currentWorkId = newWork.id;
     $("workInlineSaveBtn").dataset.mode = "edit";
-    $("workInlineDeleteBtn").classList.remove("hidden");
+    $("workInlineDeleteBtn").classList.toggle("hidden", !isAdmin);
     $("workInlineEditorTitle").textContent = "编辑作品（当前页）";
   } else {
     const idx = works.findIndex((x) => x.id === currentWorkId);
@@ -1039,6 +1080,10 @@ function saveInlineWorkEditor(keepEditing = false) {
 }
 
 function deleteCurrentPost() {
+  if (!isAdmin) {
+    alert("请先通过管理解锁后再删除文章");
+    return;
+  }
   if (!currentPostId) return;
   if (!confirm("确认删除这篇文章？")) return;
   posts = posts.filter((x) => x.id !== currentPostId);
@@ -1054,6 +1099,10 @@ function deleteCurrentPost() {
 }
 
 function deleteCurrentWork() {
+  if (!isAdmin) {
+    alert("请先通过管理解锁后再删除作品");
+    return;
+  }
   if (!currentWorkId) return;
   if (!confirm("确认删除这个作品？")) return;
   works = works.filter((x) => x.id !== currentWorkId);
@@ -1084,6 +1133,7 @@ function bind() {
   });
 
   $("langToggle").addEventListener("click", () => {
+    bumpAdminRevealCounter();
     const cur = localStorage.getItem(STORAGE_LANG) || "zh";
     const next = cur === "zh" ? "en" : "zh";
     localStorage.setItem(STORAGE_LANG, next);
@@ -1191,6 +1241,10 @@ function bind() {
 
   $("editCurrentPost").addEventListener("click", () => openInlinePostEditor(false));
   $("newPostQuick").addEventListener("click", () => {
+    if (!isAdmin) {
+      alert("请先通过管理解锁后再写文章");
+      return;
+    }
     switchTab("articles");
     $("articles-toolbar").classList.add("hidden");
     $("blogList").classList.add("hidden");
@@ -1248,6 +1302,10 @@ function bind() {
 
   $("editCurrentWork").addEventListener("click", () => openInlineWorkEditor(false));
   $("newWorkBtn").addEventListener("click", () => {
+    if (!isAdmin) {
+      alert("请先通过管理解锁后再新建作品");
+      return;
+    }
     switchTab("portfolio");
     $("portfolio-toolbar").classList.add("hidden");
     $("workList").classList.add("hidden");
