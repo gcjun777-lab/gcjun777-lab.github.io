@@ -51,18 +51,6 @@
   },
   "posts": [
     {
-      "id": "p1",
-      "title": "Weekly Report | 25/12/01~25/12/07",
-      "excerpt": "本周学习与创作记录，包括前端优化和设计迭代。",
-      "tags": [
-        "weekly",
-        "notes"
-      ],
-      "date": "2025-12-09",
-      "cover": "",
-      "markdown": "# Weekly Report\n\n这是一篇周报示例。\n\n- 完成博客页面重构\n- 优化文章卡片交互\n\n![示例图片](https://picsum.photos/900/420)"
-    },
-    {
       "id": "proj-li-zhi-badge-maker",
       "title": "项目复盘：离职厂牌制作助手（li-zhi-badge-maker）",
       "excerpt": "一个基于 Python + PySide6 + Pillow 的桌面 GUI 工具，支持批量导入人物图并自动生成离职厂牌。",
