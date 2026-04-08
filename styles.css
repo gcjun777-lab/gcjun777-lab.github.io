@@ -158,11 +158,17 @@ body {
   letter-spacing: 0.08em;
 }
 
+.header-rail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  min-width: 0;
+}
+
 .nav {
   display: flex;
   gap: 12px;
-  margin-left: auto;
-  margin-right: 10px;
   flex-wrap: wrap;
 }
 
@@ -510,6 +516,12 @@ select {
   display: inline-flex;
 }
 
+#dashboardHero > div:first-child {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
 .inline-actions {
   display: flex;
   gap: 8px;
@@ -604,7 +616,6 @@ select {
 }
 
 @media (max-width: 780px) {
-  .home-intro,
   .blog-toolbar,
   .cards,
   .cards.two-col,
@@ -622,9 +633,9 @@ select {
   }
 
   .topbar-inner {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
     padding: 14px 0 16px;
   }
 
@@ -633,25 +644,33 @@ select {
     letter-spacing: 0.06em;
   }
 
-  .nav,
-  .actions {
+  .header-rail {
     display: flex;
-    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
     width: 100%;
+    margin-left: 0;
     overflow-x: auto;
     overflow-y: hidden;
-    gap: 10px;
-    margin: 0;
-    padding: 2px 0 6px;
+    padding: 2px 0 8px;
     -ms-overflow-style: none;
     scrollbar-width: none;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
   }
 
-  .nav::-webkit-scrollbar,
-  .actions::-webkit-scrollbar {
+  .header-rail::-webkit-scrollbar {
     display: none;
+  }
+
+  .nav,
+  .actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
   }
 
   .tab,
@@ -665,13 +684,27 @@ select {
   }
 
   .home-intro {
-    gap: 22px;
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 16px;
     align-items: start;
   }
 
   .avatar {
-    width: 110px;
-    height: 110px;
+    width: 84px;
+    height: 84px;
+    border-width: 2px;
+  }
+
+  #avatarUploadLabel {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0;
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: auto;
   }
 
   .hero-title {
@@ -679,9 +712,15 @@ select {
     line-height: 1;
   }
 
+  .kicker {
+    margin: 2px 0 0;
+    font-size: 0.76rem;
+    letter-spacing: 0.16em;
+  }
+
   .hero-sub {
-    margin-top: 14px;
-    font-size: 1rem;
+    margin-top: 10px;
+    font-size: 0.98rem;
     line-height: 1.7;
   }
 

@@ -130,7 +130,6 @@ const editableMap = {
     "footerLeft",
     "footerRight",
   ],
-  contact: ["footerLeft", "footerRight"],
 };
 
 const $ = (id) => document.getElementById(id);
@@ -144,7 +143,6 @@ const tabLabelMap = {
   portfolio: "作品",
   articles: "博客",
   about: "关于",
-  contact: "联系",
 };
 
 const sideSectionMap = {
@@ -165,8 +163,7 @@ const sideSectionMap = {
     { id: "about-profile", label: "个人简介" },
     { id: "about-exp", label: "经历" },
     { id: "about-edu", label: "教育技能" },
-  ],
-  contact: [
+    { id: "about-contact", label: "联系" },
     { id: "contact-toolbar", label: "操作栏" },
     { id: "contactList", label: "联系方式" },
   ],
@@ -344,7 +341,7 @@ function scheduleWorkAutosave() {
 }
 
 function applyAdminVisibility() {
-  const ids = ["togglePageEdit", "openPostModal", "newPostQuick", "newWorkBtn"];
+  const ids = ["togglePageEdit", "newPostQuick", "newWorkBtn"];
   ids.forEach((id) => $(id)?.classList.toggle("hidden", !isAdmin));
   $("syncSetupBtn").classList.toggle("hidden", !isAdmin);
   $("adminToggle").classList.toggle("hidden", !adminEntryVisible && !isAdmin);
@@ -856,7 +853,7 @@ function renderContacts() {
     )
     .join("");
   $("newContactBtn").classList.toggle("hidden", !isAdmin);
-  if (currentTab === "contact") animateCurrentView();
+  if (currentTab === "about") animateCurrentView();
 }
 
 function openPostDetail(id) {
@@ -1255,8 +1252,6 @@ function bind() {
     $("detailCover").classList.add("hidden");
     openInlinePostEditor(true);
   });
-  $("openPostModal").addEventListener("click", () => $("newPostQuick").click());
-
   $("inlinePostMarkdown").addEventListener("input", () => {
     $("inlineMarkdownPreview").innerHTML = renderMarkdown($("inlinePostMarkdown").value);
     schedulePostAutosave();
@@ -1372,7 +1367,7 @@ function bind() {
   });
 
   window.addEventListener("scroll", () => {
-    if (currentTab === "dashboard" || currentTab === "about" || currentTab === "contact") {
+    if (currentTab === "dashboard" || currentTab === "about") {
       syncSideProgress();
     }
   });
