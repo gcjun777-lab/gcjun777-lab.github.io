@@ -29,9 +29,9 @@
     "contacts": [
       {
         "id": "c1",
-        "title": "gcjun777@gmail.com",
-        "value": "you@example.com",
-        "url": "mailto:you@example.com"
+        "title": "邮箱",
+        "value": "gcjun777@gmail.com",
+        "url": "mailto:gcjun777@gmail.com"
       },
       {
         "id": "c2",
