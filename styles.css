@@ -191,7 +191,7 @@ body {
 
 .nav {
   display: flex;
-  gap: 12px;
+  gap: 18px;
   flex-wrap: wrap;
   justify-content: center;
   margin: 0 auto;
