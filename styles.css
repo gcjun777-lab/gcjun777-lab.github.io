@@ -160,11 +160,11 @@ body {
 .topbar-tools {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .tool-btn {
-  min-width: 70px;
+  min-width: 60px;
 }
 
 .brand {
@@ -176,15 +176,16 @@ body {
 
 .theme-fab {
   flex: 0 0 auto;
-  min-width: 44px;
+  min-width: 38px;
   padding-inline: 0;
 }
 
 .header-rail {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  position: relative;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 12px;
+  min-height: 48px;
   min-width: 0;
 }
 
@@ -192,7 +193,8 @@ body {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  justify-self: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 .tab,
@@ -206,6 +208,11 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .tab:hover,
@@ -227,7 +234,10 @@ body {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  justify-self: end;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .page {
@@ -298,7 +308,7 @@ body {
 .hero-meta {
   color: var(--muted);
   margin-top: 12px;
-  line-height: 1.8;
+  line-height: 1.32;
 }
 
 .kicker {
@@ -312,7 +322,7 @@ body {
 .hero-title {
   margin: 16px 0 0;
   font-size: clamp(3rem, 10vw, 7rem);
-  line-height: 0.95;
+  line-height: 0.9;
   font-weight: 900;
 }
 
@@ -412,12 +422,13 @@ body {
   margin: 4px 0 0;
   font-size: clamp(2.2rem, 8vw, 7rem);
   font-weight: 900;
-  line-height: 0.95;
+  line-height: 0.88;
 }
 
 .view-sub {
   margin-top: 18px;
   color: var(--muted);
+  line-height: 1.35;
 }
 
 .blog-toolbar {
@@ -740,8 +751,10 @@ select {
 
   .header-rail {
     display: grid;
+    position: static;
     gap: 10px;
     width: 100%;
+    min-height: 0;
   }
 
   .nav {
@@ -762,6 +775,8 @@ select {
   .actions {
     display: flex;
     flex-wrap: nowrap;
+    position: static;
+    transform: none;
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
@@ -779,8 +794,8 @@ select {
   .primary-btn {
     flex: 0 0 auto;
     min-height: 42px;
-    padding: 10px 12px;
-    font-size: 14px;
+    padding: 9px 10px;
+    font-size: 13px;
     scroll-snap-align: start;
   }
 
@@ -788,6 +803,7 @@ select {
     width: 100%;
     justify-content: center;
     text-align: center;
+    line-height: 1.1;
   }
 
   .home-intro {
@@ -820,7 +836,7 @@ select {
   .hero-title {
     margin-top: 0;
     font-size: clamp(2.45rem, 13.6vw, 3.9rem);
-    line-height: 1.02;
+    line-height: 0.94;
     white-space: nowrap;
   }
 
@@ -841,7 +857,7 @@ select {
   .post-meta,
   .muted {
     font-size: 0.95rem;
-    line-height: 1.55;
+    line-height: 1.32;
   }
 
   .hero-copy {
