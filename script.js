@@ -326,28 +326,19 @@ function setAutosaveStatus(text, tone = "idle") {
 function scheduleConfigAutosave() {
   if (!isAdmin || !pageEditing) return;
   clearTimeout(configAutosaveTimer);
-  setAutosaveStatus("正在输入，准备自动保存...", "pending");
-  configAutosaveTimer = setTimeout(() => {
-    saveCurrentPageEdit(true);
-  }, 450);
+  setAutosaveStatus("手动保存模式：点击右下角“立即保存”后再同步 GitHub", "idle");
 }
 
 function schedulePostAutosave() {
   if (!isAdmin) return;
   clearTimeout(postAutosaveTimer);
-  setAutosaveStatus("正在输入，准备自动保存...", "pending");
-  postAutosaveTimer = setTimeout(() => {
-    saveInlinePostEditor(true);
-  }, 500);
+  setAutosaveStatus("手动保存模式：编辑完成后点击“保存文章”", "idle");
 }
 
 function scheduleWorkAutosave() {
   if (!isAdmin) return;
   clearTimeout(workAutosaveTimer);
-  setAutosaveStatus("正在输入，准备自动保存...", "pending");
-  workAutosaveTimer = setTimeout(() => {
-    saveInlineWorkEditor(true);
-  }, 500);
+  setAutosaveStatus("手动保存模式：编辑完成后点击“保存作品”", "idle");
 }
 
 function applyAdminVisibility() {
@@ -358,7 +349,7 @@ function applyAdminVisibility() {
   if (!isAdmin && pageEditing) {
     closePageEditor();
   }
-  setAutosaveStatus(isAdmin ? "自动保存已开启" : "自动保存已关闭", isAdmin ? "success" : "idle");
+  setAutosaveStatus(isAdmin ? "手动保存模式已开启" : "编辑功能已关闭", isAdmin ? "success" : "idle");
   renderContacts();
 }
 
@@ -491,7 +482,7 @@ function openPageEditor() {
   pageEditing = true;
   setEditable(editableMap[currentTab] || [], true);
   updateEditHints(true);
-  setAutosaveStatus("自动保存已开启", "success");
+  setAutosaveStatus("手动保存模式：点击右下角“立即保存”后再同步 GitHub", "success");
 }
 
 function saveCurrentPageEdit(keepEditing = false) {
