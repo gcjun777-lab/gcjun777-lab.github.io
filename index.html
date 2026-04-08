@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260408m" />
+    <link rel="stylesheet" href="./styles.css?v=20260408n" />
   </head>
   <body>
     <aside class="side-progress" id="sideProgress">
@@ -83,8 +83,10 @@
         <p class="view-sub reveal" id="portfolioSubtitle">精选项目展示区。</p>
 
         <div class="blog-toolbar reveal" id="portfolio-toolbar">
-          <input id="workSearch" type="search" placeholder="搜索作品标题或内容..." />
-          <select id="workTagFilter"><option value="all">全部标签</option></select>
+          <div class="toolbar-combo">
+            <input id="workSearch" type="search" placeholder="搜索作品标题或内容..." />
+            <select id="workTagFilter"><option value="all">全部标签</option></select>
+          </div>
           <button id="newWorkBtn" class="mini-btn" type="button">+ 新作品</button>
         </div>
 
@@ -129,8 +131,10 @@
         <p class="view-sub" id="blogSubtitle">支持搜索、标签筛选与 Markdown 阅读。</p>
 
         <div class="blog-toolbar" id="articles-toolbar">
-          <input id="blogSearch" type="search" placeholder="搜索标题或内容..." />
-          <select id="blogTagFilter"><option value="all">全部标签</option></select>
+          <div class="toolbar-combo">
+            <input id="blogSearch" type="search" placeholder="搜索标题或内容..." />
+            <select id="blogTagFilter"><option value="all">全部标签</option></select>
+          </div>
           <button id="newPostQuick" class="mini-btn" type="button">+ 新文章</button>
         </div>
 
@@ -231,7 +235,7 @@
       <button id="savePageEdit" class="primary-btn" type="button">立即保存</button>
     </div>
 
-    <script src="./script.js?v=20260408m"></script>
+    <script src="./script.js?v=20260408n"></script>
   </body>
 </html>
 

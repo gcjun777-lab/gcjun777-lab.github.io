@@ -434,8 +434,30 @@ body {
 .blog-toolbar {
   margin-top: 34px;
   display: grid;
-  grid-template-columns: 1fr 180px auto;
+  grid-template-columns: 1fr auto;
   gap: 10px;
+}
+
+.toolbar-combo {
+  position: relative;
+  min-width: 0;
+}
+
+.toolbar-combo input {
+  width: 100%;
+  padding-right: 164px;
+}
+
+.toolbar-combo select {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  bottom: 2px;
+  width: 150px;
+  border: 0;
+  border-left: 2px solid var(--line);
+  border-radius: 0 10px 10px 0;
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
 }
 
 .contact-toolbar {
@@ -510,11 +532,11 @@ select {
 }
 
 .about-contact-block {
-  margin-top: 28px;
+  margin-top: 18px;
 }
 
 .about-contact-head {
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .about-contact-title {
@@ -871,11 +893,11 @@ select {
   }
 
   .about-contact-block {
-    margin-top: 34px;
+    margin-top: 22px;
   }
 
   .about-contact-head {
-    margin-bottom: 22px;
+    margin-bottom: 10px;
   }
 
   .about-contact-title {
@@ -898,8 +920,15 @@ select {
     margin-top: 24px;
   }
 
+  .toolbar-combo input {
+    padding-right: 126px;
+  }
+
+  .toolbar-combo select {
+    width: 118px;
+  }
+
   .blog-toolbar input,
-  .blog-toolbar select,
   .blog-toolbar button {
     width: 100%;
   }
