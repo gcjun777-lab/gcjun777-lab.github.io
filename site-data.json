@@ -81,18 +81,6 @@
   ],
   "works": [
     {
-      "id": "w1",
-      "title": "Portfolio System",
-      "excerpt": "可视化编辑的个人站点系统。",
-      "tags": [
-        "web",
-        "design"
-      ],
-      "date": "2026-01-12",
-      "cover": "https://picsum.photos/900/500?random=31",
-      "markdown": "# Portfolio System\n\n一个支持多页面编辑、博客写作和作品展示的个人网站模板。\n\n- 当前页直接编辑\n- 文章 Markdown 支持\n- 统一暗色视觉风格"
-    },
-    {
       "id": "w2",
       "title": "Motion Landing",
       "excerpt": "叙事型动效着陆页。",
