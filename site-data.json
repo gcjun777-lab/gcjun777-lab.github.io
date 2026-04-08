@@ -28,6 +28,12 @@
     "githubName": "@yourid",
     "contacts": [
       {
+        "id": "c1775639098944",
+        "title": "GitHub",
+        "value": "@gcjun777-lab",
+        "url": "https://github.com/gcjun777-lab"
+      },
+      {
         "id": "c1",
         "title": "邮箱",
         "value": "gcjun777@gmail.com",
