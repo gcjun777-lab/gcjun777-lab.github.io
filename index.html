@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260408e" />
+    <link rel="stylesheet" href="./styles.css?v=20260408f" />
   </head>
   <body>
     <aside class="side-progress" id="sideProgress">
@@ -21,7 +21,13 @@
 
     <header class="topbar">
       <div class="wrap topbar-inner">
-        <h1 class="brand" id="brandName">YOUR NAME</h1>
+        <div class="topbar-head">
+          <h1 class="brand" id="brandName">YOUR NAME</h1>
+          <div class="topbar-tools">
+            <button id="langToggle" class="mini-btn tool-btn" type="button">中 / EN</button>
+            <button id="themeToggle" class="mini-btn theme-fab" type="button" aria-label="切换黑白模式">◐</button>
+          </div>
+        </div>
         <div class="header-rail">
           <nav class="nav">
             <button class="tab is-active" data-tab="dashboard">首页</button>
@@ -29,11 +35,9 @@
             <button class="tab" data-tab="articles">博客</button>
             <button class="tab" data-tab="about">关于</button>
           </nav>
-          <div class="actions">
+          <div class="actions hidden" id="adminActions">
             <button id="adminToggle" class="mini-btn hidden" type="button">管理解锁</button>
             <button id="syncSetupBtn" class="mini-btn hidden" type="button">同步设置</button>
-            <button id="langToggle" class="mini-btn" type="button">中 / EN</button>
-            <button id="themeToggle" class="mini-btn" type="button">◐</button>
             <button id="togglePageEdit" class="mini-btn" type="button">页面编辑</button>
           </div>
         </div>
@@ -43,14 +47,16 @@
     <main class="wrap page">
       <section class="view is-show" id="view-dashboard">
         <div class="home-intro reveal" id="dashboardHero">
-          <div>
+          <div class="hero-heading">
+            <p class="kicker" id="homeKicker">PERSONAL WEBSITE</p>
+            <h2 class="hero-title" id="heroTitle">作品集 · 博客</h2>
+          </div>
+          <div class="hero-profile">
             <img id="homeAvatar" class="avatar" src="https://picsum.photos/200" alt="avatar" />
             <label id="avatarUploadLabel" class="mini-btn hidden" for="avatarFileInput">上传头像</label>
             <input id="avatarFileInput" type="file" accept="image/*" class="hidden" />
           </div>
-          <div>
-            <p class="kicker" id="homeKicker">PERSONAL WEBSITE</p>
-            <h2 class="hero-title" id="heroTitle">作品集 · 博客</h2>
+          <div class="hero-copy">
             <p class="hero-sub" id="heroSubtitle">极简、干净、可扩展。用于展示你的项目、文章和联系方式。</p>
             <p class="hero-meta" id="heroMeta">前端开发者 / 创作者 / 上海</p>
           </div>
@@ -225,7 +231,7 @@
       <button id="savePageEdit" class="primary-btn" type="button">立即保存</button>
     </div>
 
-    <script src="./script.js?v=20260408e"></script>
+    <script src="./script.js?v=20260408f"></script>
   </body>
 </html>
 

@@ -343,6 +343,7 @@ function scheduleWorkAutosave() {
 function applyAdminVisibility() {
   const ids = ["togglePageEdit", "newPostQuick", "newWorkBtn"];
   ids.forEach((id) => $(id)?.classList.toggle("hidden", !isAdmin));
+  $("adminActions").classList.toggle("hidden", !adminEntryVisible && !isAdmin);
   $("syncSetupBtn").classList.toggle("hidden", !isAdmin);
   $("adminToggle").classList.toggle("hidden", !adminEntryVisible && !isAdmin);
   $("adminToggle").textContent = isAdmin ? "退出管理" : "管理解锁";
@@ -359,6 +360,7 @@ function applyAdminVisibility() {
 
 function revealAdminEntry() {
   adminEntryVisible = true;
+  $("adminActions").classList.remove("hidden");
   $("adminToggle").classList.remove("hidden");
   setAutosaveStatus("已显示管理入口", "idle");
 }

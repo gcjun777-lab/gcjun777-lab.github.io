@@ -145,10 +145,26 @@ body {
 
 .topbar-inner {
   min-height: 88px;
+  display: grid;
+  gap: 16px;
+  padding: 10px 0;
+}
+
+.topbar-head {
   display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 10px 0;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tool-btn {
+  min-width: 70px;
 }
 
 .brand {
@@ -158,11 +174,16 @@ body {
   letter-spacing: 0.08em;
 }
 
+.theme-fab {
+  flex: 0 0 auto;
+  min-width: 44px;
+  padding-inline: 0;
+}
+
 .header-rail {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-left: auto;
   min-width: 0;
 }
 
@@ -203,6 +224,7 @@ body {
 .actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .page {
@@ -237,8 +259,27 @@ body {
 .home-intro {
   display: grid;
   grid-template-columns: 140px 1fr;
+  grid-template-areas:
+    "profile heading"
+    "profile copy";
   gap: 32px;
   align-items: center;
+}
+
+.hero-heading {
+  grid-area: heading;
+}
+
+.hero-profile {
+  grid-area: profile;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-self: start;
+}
+
+.hero-copy {
+  grid-area: copy;
 }
 
 .avatar {
@@ -516,12 +557,6 @@ select {
   display: inline-flex;
 }
 
-#dashboardHero > div:first-child {
-  position: relative;
-  display: grid;
-  justify-items: center;
-}
-
 .inline-actions {
   display: flex;
   gap: 8px;
@@ -644,33 +679,49 @@ select {
     letter-spacing: 0.06em;
   }
 
-  .header-rail {
-    display: flex;
+  .topbar-head {
     align-items: center;
+  }
+
+  .header-rail {
+    display: grid;
     gap: 10px;
     width: 100%;
-    margin-left: 0;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 2px 0 8px;
+    gap: 10px;
+    margin: 0;
+    padding: 2px 0 6px;
     -ms-overflow-style: none;
     scrollbar-width: none;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
   }
 
-  .header-rail::-webkit-scrollbar {
+  .nav::-webkit-scrollbar,
+  .actions::-webkit-scrollbar {
     display: none;
   }
 
-  .nav,
   .actions {
     display: flex;
     flex-wrap: nowrap;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 10px;
-    flex: 0 0 auto;
     margin: 0;
-    padding: 0;
+    padding: 0 0 4px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
   }
 
   .tab,
@@ -686,7 +737,10 @@ select {
   .home-intro {
     display: grid;
     grid-template-columns: 84px 1fr;
-    gap: 16px;
+    grid-template-areas:
+      "heading heading"
+      "profile copy";
+    gap: 14px 16px;
     align-items: start;
   }
 
@@ -708,18 +762,20 @@ select {
   }
 
   .hero-title {
-    font-size: clamp(2.5rem, 16vw, 4.4rem);
-    line-height: 1;
+    margin-top: 6px;
+    font-size: clamp(2.45rem, 13.6vw, 3.9rem);
+    line-height: 0.92;
+    white-space: nowrap;
   }
 
   .kicker {
-    margin: 2px 0 0;
+    margin: 0;
     font-size: 0.76rem;
     letter-spacing: 0.16em;
   }
 
   .hero-sub {
-    margin-top: 10px;
+    margin-top: 0;
     font-size: 0.98rem;
     line-height: 1.7;
   }
